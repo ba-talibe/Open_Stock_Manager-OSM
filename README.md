@@ -1,1 +1,1 @@
-# Open_Stock_Manager-OMS-
+# Open_Stock_Manager-OMS
