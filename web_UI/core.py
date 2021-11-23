@@ -9,7 +9,6 @@ with open("creds.json", "r") as jsonfile:
 
 def database():
 	global conn, cursor
-	print(creds)
 	conn = mysql.connector.connect(host='localhost',
 									user='oms', 
 									password='passer123', 

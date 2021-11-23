@@ -16,7 +16,6 @@ python3 -m pip install -r requirements.txt || echo "impossble d 'installer les p
 chmod +x *.py
 #on change le plugin de connexion de l'utilisateur root
 mysql -u root -p mysql < root_auth_plugin.sql
-
 #on initialise la base de donnes
 ./init_db.py || echo "une erreur est survenue l'ors de l'initialisation de la besa de donnees"
 mysql -u root -p stock < db.sql || echo "impossible de creer les tables de la base de donnees "
