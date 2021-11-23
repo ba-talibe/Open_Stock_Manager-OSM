@@ -1,8 +1,17 @@
+"""
+Module permettant a l'ineterface utilisateur d'utiliser
+de recupererr les donnees de codebar 
+"""
 import cv2
 import os
 import numpy as np
 from pyzbar.pyzbar import decode
 
+
+"""
+redimensionne par aggrandissements ou par retrecissement
+les cpatures des codebar
+"""
 def rescaleFrame(frame, scale=0.75):
     [height, width] = (frame.shape[0], frame.shape[1])
     dimension = (int(width*scale), int(height*scale))
