@@ -23,10 +23,10 @@ while len(passwd) <= 7:
     passwd = getpass.getpass("enter un mot de passe : ")
 creds.update({'password': passwd})
 
-with open("creds.json", "w") as jsonfile:
+with open("/usr/share/oms/creds.json", "w") as jsonfile:
     json.dump(creds, jsonfile)
 
-chmod('creds.json', 0o777)
+chmod('/usr/share/oms/creds.json', 0o777)
 
 passwd = getpass.getpass("enter un mot de passe \
     administrateur de la de donnes (root): ")

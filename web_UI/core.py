@@ -4,7 +4,7 @@ import json
 
 creds = dict()
 
-with open("creds.json", "r") as jsonfile:
+with open("/usr/share/oms/creds.json", "r") as jsonfile:
     creds = json.load(jsonfile)
 
 def database():
@@ -33,7 +33,7 @@ def ajouter(code, designation, descriptions):
 	conn.commit()
 
 
-def consultation(code) -> list[tuple]:
+def consultation(code) -> list:
 	database()
 	sql = "select * from articles code=%s"
 	val = (code,)
