@@ -4,7 +4,7 @@ import json
 
 creds = dict()
 
-with open("creds.json", "r") as jsonfile:
+with open("/usr/share/osm/creds.json", "r") as jsonfile:
     creds = json.load(jsonfile)
 
 def database():
