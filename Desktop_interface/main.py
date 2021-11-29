@@ -1,5 +1,6 @@
 from fenPrincipal import *
 
+
 if __name__ == '__main__':
-    fen = MainWindow()
-    fen.mainloop()
+    gui = GuiThread()
+    gui.start()
