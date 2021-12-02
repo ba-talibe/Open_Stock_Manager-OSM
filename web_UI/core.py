@@ -25,7 +25,7 @@ def readAll():
 	for i in result:
 		yield i
 
-def ajouter(code, designation, descriptions):
+def deposer(code, designation, descriptions):
 	database()
 	sql = "insert into articles(code, designation, descriptions) values(%s, %s, %s)"
 	val = (code, designation, descriptions )

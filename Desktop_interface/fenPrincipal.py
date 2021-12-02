@@ -5,10 +5,10 @@ from tkinter.messagebox import *
 import sys
 import threading
 # a remplacer âr le repertoire /usr/share/osm au moment du deploiement
-sys.path.append("/run/media/talibe/4ec026c5-bbb6-4ca0-94b0-f9dc7a1028e2/home/talibe/Bureau/Open_Stock_Manager-OMS/web_UI")
-sys.path.append("/run/media/talibe/4ec026c5-bbb6-4ca0-94b0-f9dc7a1028e2/home/talibe/Bureau/Open_Stock_Manager-OMS/web_UI")
+sys.path.append("/home/talibe/Bureau/Open_Stock_Manager-OMS/web_UI")
+sys.path.append("/home/talibe/Bureau/Open_Stock_Manager-OMS/web_UI")
 
-import core
+
 import codebar 
 
 
@@ -29,13 +29,19 @@ class MainWindow(Tk):
         self.maxsize(800, 400)
         self.dispo = True
         self.onglet_control = ttk.Notebook(self)
-        self.donnees = {
-            'designationDepot': StringVar(),
-            'designationRetrait': StringVar(),
-            'descriptionsDepot': StringVar(),
-            'descriptionsRetrait': StringVar(),
-            'quantiteDepot' : StringVar(),
-            'quantiteRetrait' : StringVar()
+        self.getCode = lambda code : str(code[0])[2:-1]
+
+        self.donneeRetrait = {
+            'code': StringVar(),
+            'designation': StringVar(),
+            'descriptions': StringVar(),
+            'quantite' : StringVar()
+        }
+        self.donneeDepot = {
+            'code': StringVar(),
+            'designation': StringVar(),
+            'descriptions': StringVar(),
+            'quantite' : StringVar(),
         }
 
         self.onglet_deposer = ttk.Frame(self.onglet_control)
@@ -49,21 +55,67 @@ class MainWindow(Tk):
         t.setDaemon(True)
         t.start()
 
+        self.showDepotForm((b'test interface', 'generic'))
+        #self.showRetraitForm((b'test interface', 'generic'))
+
     def showDepotForm(self, code):# a remplacer par la bonne configuration
-        l = Label(self.onglet_deposer, text="Barcode: " + str(code[0])[2:-1], font="Arial 50")
-        l.pack()
-        e = Entry(self.onglet_deposer)
-        e.pack(fill=BOTH)
-        b = Button(self.onglet_deposer, text="ajouter", command=self.ajouter)
-        b.pack(fill=BOTH)
-    
+        self.donneeDepot['code'].set(self.getCode(code))
+        codeLabel = Label(self.onglet_deposer, text="Barcode: " + self.getCode(code), font="Arial 70")
+        codeLabel.grid(row=1, column=2)
+
+
+        designationLabel = Label(self.onglet_deposer, text="Desigation :", font="Arial 50")
+        designationLabel.grid(row=2, column=1, sticky=W)
+
+        designationEntry = Entry(self.onglet_deposer, textvariable=self.donneeDepot['designation'], width=80)
+        designationEntry.grid(row=2, column=2, columnspan=2)
+
+
+        descriptionLabel = Label(self.onglet_deposer, text="Descriptions :", font="Arial 50")
+        descriptionLabel.grid(row=3, column=1, sticky=W)
+
+        descriptionEntry = Entry(self.onglet_deposer, textvariable=self.donneeDepot['descriptions'], width=80)
+        descriptionEntry.grid(row=3, column=2, columnspan=2)
+
+
+        quantiteLabel = Label(self.onglet_deposer, text="Quantite :", font="Arial 50")
+        quantiteLabel.grid(row=4, column=1, sticky=W)
+
+        quantiteEntry = Entry(self.onglet_deposer, textvariable=self.donneeDepot['quantite'], width=80)
+        quantiteEntry.grid(row=4, column=2, columnspan=2)
+
+        ajouterButton = Button(self.onglet_deposer, text="Deposer", command=self.deposer)
+        ajouterButton.grid(row=5, column=3, sticky=E)
+
+
     def showRetraitForm(self, code):# a remplacer par la bonne configuration
-        l = Label(self.onglet_retirer, text="Barcode: " + str(code[0][2:-1]), font="Arial 50")
-        l.pack()
-        e = Entry(self.onglet_retirer)
-        e.pack(fill=BOTH)
-        b = Button(self.onglet_retirer, text="ajouter", command=self.ajouter)
-        b.pack(fill=BOTH)
+        self.donneeDepot['code'].set(self.getCode(code))
+        codeLabel = Label(self.onglet_retirer, text="Barcode: " + self.getCode(code), font="Arial 70")
+        codeLabel.grid(row=1, column=2)
+
+
+        designationLabel = Label(self.onglet_retirer, text="Desigation :", font="Arial 50")
+        designationLabel.grid(row=2, column=1, sticky=W)
+
+        designationEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['designation'], width=80)
+        designationEntry.grid(row=2, column=2, columnspan=2)
+
+
+        descriptionLabel = Label(self.onglet_retirer, text="Descriptions :", font="Arial 50")
+        descriptionLabel.grid(row=3, column=1, sticky=W)
+
+        designationEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['descriptions'], width=80)
+        designationEntry.grid(row=3, column=2, columnspan=2)
+
+
+        quantiteLabel = Label(self.onglet_retirer, text="Quantite :", font="Arial 50")
+        quantiteLabel.grid(row=4, column=1, sticky=W)
+
+        quantiteEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['quantite'], width=80)
+        quantiteEntry.grid(row=4, column=2, columnspan=2)
+
+        ajouterButton = Button(self.onglet_retirer, text="Deposer", command=self.retirer)
+        ajouterButton.grid(row=5, column=3, sticky=E)
 
     def procede(self, code):
         self.dispo =False
@@ -74,14 +126,63 @@ class MainWindow(Tk):
             print("on effectue un depot")
             self.showDepotForm(code)
 
+    def correctSaisieDepot(self):
+       
+        for i in self.donneeDepot.values():
+            print(i.get())
+        if len(self.donneeDepot['code'].get()) == 0:
+            return False
+        
+        if len(self.donneeDepot['designation'].get()) == 0:
+            return False
+        
+        if not self.donneeDepot['quantite'].get().isnumeric() or len(self.donneeDepot['quantite'].get()) == 0:
+            return False
+        
+        return True
 
-    def ajouter(self):
-        # recuperer le code barre et l'ajouter dans la base de donnees
-        if self.onglet_control.select()[-1] == '2':
-            for i in self.onglet_retirer.winfo_children():
-                i.destroy()
+    def correctSaisieRetrait(self):
+       
+        for i in self.donneeDepot.values():
+            print(i.get())
+        if len(self.donneeDepot['code'].get()) == 0:
+            return False
+        
+        if len(self.donneeDepot['designation'].get()) == 0:
+            return False
+        
+        if not self.donneeDepot['quantite'].get().isnumeric() or len(self.donneeDepot['quantite'].get()) == 0:
+            return False
+        
+        return True
+
+    def deposer(self):
+        if self.correctSaisieDepot():
+            """core.deposer(self.donneeDepot['code'],
+                         self.donneeDepot['designation'],
+                         self.donneeDepot['descriptions'],
+                         self.donneeDepot['quantite']
+                         )"""
+            pass
         else:
-            for i in self.onglet_deposer.winfo_children():
-                i.destroy()
+             showwarning("Erreur de Saisie", "Les informations saisies sont incorrect")
+             return
+
+        for element in self.onglet_deposer.winfo_children():
+            element.destroy()
+        
+    def retirer(self):
+        if self.correctSaisieRetrait():
+            """ core.retirer(self.donneeRetrait['code'],
+                         self.donneeRetrait['designation'],
+                         self.donneeRetrait['descriptions'],
+                         self.donneeRetrait['quantite']
+                         )"""
+            pass
+        else:
+             showwarning("Erreur de Saisie", "Les informations saisies sont incorrect")
+             return
+        for element in self.onglet_retirer.winfo_children():
+            element.destroy()
         
         self.dispo = True
