@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS articles (
 	code varchar(50),
     designation varchar(100),
 	descriptions varchar(500),
-	quantite interger(),
+	quantite integer,
     primary key(id, code)
 );

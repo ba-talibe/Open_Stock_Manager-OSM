@@ -158,12 +158,13 @@ class MainWindow(Tk):
 
     def deposer(self):
         if self.correctSaisieDepot():
-            """core.deposer(self.donneeDepot['code'],
-                         self.donneeDepot['designation'],
-                         self.donneeDepot['descriptions'],
-                         self.donneeDepot['quantite']
-                         )"""
-            pass
+            if core.deposer(self.donneeRetrait['code'].get(),
+                         self.donneeRetrait['designation'].get(),
+                         self.donneeRetrait['descriptions'].get(),
+                         self.donneeRetrait['quantite'].get()
+                         ) == -1:
+                showwarning("Erreur", "L'article scannee n'est pas enregistrer dans e stock")
+
         else:
              showwarning("Erreur de Saisie", "Les informations saisies sont incorrect")
              return
@@ -173,12 +174,13 @@ class MainWindow(Tk):
         
     def retirer(self):
         if self.correctSaisieRetrait():
-            """ core.retirer(self.donneeRetrait['code'],
-                         self.donneeRetrait['designation'],
-                         self.donneeRetrait['descriptions'],
-                         self.donneeRetrait['quantite']
-                         )"""
-            pass
+            if core.retirer(self.donneeRetrait['code'].get(),
+                         self.donneeRetrait['designation'].get(),
+                         self.donneeRetrait['descriptions'].get(),
+                         self.donneeRetrait['quantite'].get()
+                         ) == -1:
+                showwarning("Erreur", "L'article scannee n'est pas enregistrer dans e stock")
+            
         else:
              showwarning("Erreur de Saisie", "Les informations saisies sont incorrect")
              return

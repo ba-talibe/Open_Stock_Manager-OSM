@@ -25,13 +25,6 @@ def readAll():
 	for i in result:
 		yield i
 
-def deposer(code, designation, descriptions):
-	database()
-	sql = "insert into articles(code, designation, descriptions) values(%s, %s, %s)"
-	val = (code, designation, descriptions )
-	cursor.execute(sql, val)
-	conn.commit()
-
 
 def consultation(code) -> list:
 	database()
@@ -45,6 +38,41 @@ def consultation(code) -> list:
 		return result
 		
 	return message
+
+def deposer(code : str, designation :str, descriptions : str, quantite : str):
+	database()
+	consul = consultation(code)
+	if consul[0] == 0:
+		sql = "insert into articles(code, designation, descriptions, quantite) values(%s, %s, %s, %s)"
+		val = (code, designation, descriptions, quantite)
+		cursor.execute(sql, val)
+		conn.commit()
+	else:
+		nombre = int(consul[0][4]) + int(quantite)
+		nombre = str(nombre)
+		sql = "update articles set quantite=%s where code=%s"
+		val = (nombre, code)
+		cursor.execute(sql, val)
+		conn.commit()
+
+def retirer(code, quantite):
+	database()
+	consul = consultation(code)
+	if consul[0] == 0:
+		return -1
+	else:
+		quantEnStock = int(consul[0][4])
+		if quantite > quantEnStock:
+			return -1
+		else:
+			quantite = quantEnStock - int(quantite)
+			if quantite == 0:
+				suppression(code)
+			else:
+				sql = "update articles set quantite=%s where code=%s"
+				val = (str(quantite), code)
+				cursor.execute(sql, val)
+				conn.commit()
 
 def suppression(code):
 	database()
