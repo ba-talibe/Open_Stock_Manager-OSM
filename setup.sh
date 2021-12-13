@@ -4,10 +4,10 @@
 sudo service mysql restart || \
 echo "Impossible de demarer mysql \n insatllation" &&  sudo apt-get update && \
 sudo apt-get upgrade && sudo apt install mariadb-server || \
-echo "une erreur est survenue" && exit
+(echo "une erreur est survenue" && exit )
 
 # install les librairie python requis
-python3 -m pip install -r requirements.txt || echo "impossble d 'installer les modules requis " && exit
+python3 -m pip install -r requirements.txt || (echo "impossble d 'installer les modules requis " && exit )
 
 #on rend executables les script python du repertoire
 sudo chmod +x /web_UI/*.py
