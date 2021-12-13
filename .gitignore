@@ -1,0 +1,6 @@
+push
+creds.json
+*.pyc
+__pycahe__
+*.png
+*.svg
