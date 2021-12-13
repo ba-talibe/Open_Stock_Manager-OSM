@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 # verifier mysqlserveur est installer sinon l'installer sur le rasberry pi
 sudo service mysql restart || \
