@@ -5,12 +5,10 @@ from tkinter.messagebox import *
 import sys
 import threading
 # a remplacer âr le repertoire /usr/share/osm au moment du deploiement
-sys.path.append("/home/talibe/Bureau/Open_Stock_Manager-OMS/web_UI")
-sys.path.append("/home/talibe/Bureau/Open_Stock_Manager-OMS/web_UI")
-
+sys.path.append("/usr/share/osm")
 
 import codebar 
-
+import core
 
 class GuiThread(threading.Thread):
     def ___init__(self):
@@ -164,7 +162,7 @@ class MainWindow(Tk):
                          self.donneeRetrait['quantite'].get()
                          ) == -1:
                 showwarning("Erreur", "L'article scannee n'est pas enregistrer dans e stock")
-
+            
         else:
              showwarning("Erreur de Saisie", "Les informations saisies sont incorrect")
              return
@@ -179,7 +177,7 @@ class MainWindow(Tk):
                          self.donneeRetrait['descriptions'].get(),
                          self.donneeRetrait['quantite'].get()
                          ) == -1:
-                showwarning("Erreur", "L'article scannee n'est pas enregistrer dans e stock")
+                showwarning("Erreur", "L'article scannee n'est pas enregistrer dans le stock")
             
         else:
              showwarning("Erreur de Saisie", "Les informations saisies sont incorrect")
