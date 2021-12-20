@@ -1,5 +1,3 @@
-  GNU nano 3.2                                               setup.sh                                                        
-
 #! /bin/bash
 
 # verifier mysqlserveur est installer sinon l'installer sur le rasberry pi
@@ -8,7 +6,7 @@ echo "Impossible de demarer mysql \n insatllation" &&  sudo apt-get update && \
 sudo apt-get upgrade && sudo apt install mariadb-server || \
 (echo "une erreur est survenue" && exit )
 
-# installation des librairie python requis
+# install les librairie python requis
 sudo apt install python-zbar
 python3 -m pip install -r requirements.txt || (echo "impossble d 'installer les modules requis " && exit )
 
@@ -31,6 +29,7 @@ chmod a+x run-osm
 echo "#! /usr/bin/bash" >> run-osm 
 echo "python3 /usr/share/osm/main.py" >> run-osm
 
-python3 init_db.py || echo "une erreur est survenue l'ors de l'initialisation de la besa de donnees"
+sudo python3 init_db.py || echo "une erreur est survenue l'ors de l'initialisation de la besa de donnees"
 sudo mysql -u root -p stock < ./web_UI/db.sql || echo "impossible de creer les tables de la base de donnees " 
+
 echo "[+] Done ..."

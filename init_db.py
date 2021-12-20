@@ -1,3 +1,4 @@
+
 #! /usr/bin/python3
 """
 script d'inialisation de la base de donnees
@@ -7,7 +8,7 @@ a remplir plutard
 import json
 import getpass
 import mysql.connector
-from os import chmod
+import os
 
 creds = dict()
 
@@ -23,13 +24,15 @@ while len(passwd) <= 7:
     passwd = getpass.getpass("enter un mot de passe : ")
 creds.update({'password': passwd})
 
-with open("/usr/share/osm/creds.json", "w") as jsonfile:
+with open("/usr/share/osm/creds.json", "w+") as jsonfile:
+    jsonfile.seek(0)
+    jsonfile.truncate()
     json.dump(creds, jsonfile)
 
-chmod('/usr/share/osm/creds.json', 0o777)
-
-passwd = getpass.getpass("enter un mot de passe \
-    administrateur de la de donnes (root): ")
+if not os.system("sudo chown pi  /usr/share/osm/*") == 0:
+    print("Une erreur est survenu lors de l'execution de ' sudo chown pi  /usr/share/osm/*'")
+    print("veillez penser a changer le proprietaire de du repertoire /usr/share/osm")
+passwd = getpass.getpass("enter un mot de passe administrateur de la de donnes (root): ")
 rootconn = mysql.connector.connect(host='localhost',
 									user='root', 
 									password=passwd,
