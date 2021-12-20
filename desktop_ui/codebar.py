@@ -1,11 +1,12 @@
 """
 Module permettant a l'ineterface utilisateur d'utiliser
-de recupererr les donnees de codebar 
+de recuperer les donnees de codebar 
 """
 
 from pyzbar.pyzbar import decode
 import cv2
 import time
+import beep
 
 def rescaleFrame(frame, scale=0.75):
     [height, width] = (frame.shape[0], frame.shape[1])
@@ -35,6 +36,8 @@ def BarcodeReader(fen):
                         while not fen.dispo:
                             time.sleep(1)
                         print("processing ....")
+                        beep.play()
+                        beep.playBuzzur()
                         fen.procede((barcode.data, barcode.type))
         print("closing ..")
 
