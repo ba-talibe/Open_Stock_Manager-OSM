@@ -1,6 +1,11 @@
-
 #! /usr/bin/python3 
 # -*-coding : utf-8 -*- 
+import sys
+
+sys.path.append("/usr/share/osm")
+
+import core
+
 
 from core import readAll
 
