@@ -16,6 +16,9 @@ class GuiThread(threading.Thread):
 
     def run(self):
         self.window = MainWindow()
+        t = threading.Thread(target=codebar.BarcodeReader, args=(self.window,))
+        t.setDaemon(True)
+        t.start()
         self.window.mainloop()
 
 
@@ -24,7 +27,7 @@ class MainWindow(Tk):
     def __init__(self):
         Tk.__init__(self)
         self.minsize(700, 400)
-        self.maxsize(800, 400)
+        self.maxsize(1000, 400)
         self.dispo = True
         self.onglet_control = ttk.Notebook(self)
         self.getCode = lambda code : str(code[0])[2:-1]
@@ -49,34 +52,28 @@ class MainWindow(Tk):
         self.onglet_control.add(self.onglet_retirer, text='Retirer')
 
         self.onglet_control.pack(expand=1, fill="both")
-        t = threading.Thread(target=codebar.BarcodeReader, args=(self,))
-        t.setDaemon(True)
-        t.start()
-
-        self.showDepotForm((b'test interface', 'generic'))
-        #self.showRetraitForm((b'test interface', 'generic'))
 
     def showDepotForm(self, code):# a remplacer par la bonne configuration
         self.donneeDepot['code'].set(self.getCode(code))
-        codeLabel = Label(self.onglet_deposer, text="Barcode: " + self.getCode(code), font="Arial 70")
+        codeLabel = Label(self.onglet_deposer, text="Barcode: " + self.getCode(code), font="Arial 30")
         codeLabel.grid(row=1, column=2)
 
 
-        designationLabel = Label(self.onglet_deposer, text="Desigation :", font="Arial 50")
+        designationLabel = Label(self.onglet_deposer, text="Desigation :", font="Arial 20")
         designationLabel.grid(row=2, column=1, sticky=W)
 
         designationEntry = Entry(self.onglet_deposer, textvariable=self.donneeDepot['designation'], width=80)
         designationEntry.grid(row=2, column=2, columnspan=2)
 
 
-        descriptionLabel = Label(self.onglet_deposer, text="Descriptions :", font="Arial 50")
+        descriptionLabel = Label(self.onglet_deposer, text="Descriptions :", font="Arial 20")
         descriptionLabel.grid(row=3, column=1, sticky=W)
 
         descriptionEntry = Entry(self.onglet_deposer, textvariable=self.donneeDepot['descriptions'], width=80)
         descriptionEntry.grid(row=3, column=2, columnspan=2)
 
 
-        quantiteLabel = Label(self.onglet_deposer, text="Quantite :", font="Arial 50")
+        quantiteLabel = Label(self.onglet_deposer, text="Quantite :", font="Arial 20")
         quantiteLabel.grid(row=4, column=1, sticky=W)
 
         quantiteEntry = Entry(self.onglet_deposer, textvariable=self.donneeDepot['quantite'], width=80)
@@ -88,25 +85,25 @@ class MainWindow(Tk):
 
     def showRetraitForm(self, code):# a remplacer par la bonne configuration
         self.donneeDepot['code'].set(self.getCode(code))
-        codeLabel = Label(self.onglet_retirer, text="Barcode: " + self.getCode(code), font="Arial 70")
+        codeLabel = Label(self.onglet_retirer, text="Barcode: " + self.getCode(code), font="Arial 30")
         codeLabel.grid(row=1, column=2)
 
 
-        designationLabel = Label(self.onglet_retirer, text="Desigation :", font="Arial 50")
+        designationLabel = Label(self.onglet_retirer, text="Desigation :", font="Arial 20")
         designationLabel.grid(row=2, column=1, sticky=W)
 
-        designationEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['designation'], width=80)
+        designationEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['designation'], state=DISABLED, width=80)
         designationEntry.grid(row=2, column=2, columnspan=2)
 
 
-        descriptionLabel = Label(self.onglet_retirer, text="Descriptions :", font="Arial 50")
+        descriptionLabel = Label(self.onglet_retirer, text="Descriptions :", font="Arial 20")
         descriptionLabel.grid(row=3, column=1, sticky=W)
 
-        designationEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['descriptions'], width=80)
+        designationEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['descriptions'], state=DISABLED, width=80)
         designationEntry.grid(row=3, column=2, columnspan=2)
 
 
-        quantiteLabel = Label(self.onglet_retirer, text="Quantite :", font="Arial 50")
+        quantiteLabel = Label(self.onglet_retirer, text="Quantite :", font="Arial 20")
         quantiteLabel.grid(row=4, column=1, sticky=W)
 
         quantiteEntry = Entry(self.onglet_retirer, textvariable=self.donneeRetrait['quantite'], width=80)
@@ -119,7 +116,15 @@ class MainWindow(Tk):
         self.dispo =False
         if self.onglet_control.select()[-1] == '2':
             print("on effectue un retrait")
-            self.showRetraitForm(code)
+            article = core.consultation(self.getCode(code))
+            if article[0] == 0:
+                    showwarning("Erreur", "L'article scannee n'est pas enregistrer dans le stock")
+            else:
+                self.donneeRetrait['code'].set(article[0][1])
+                self.donneeRetrait['designation'].set(article[0][2])
+                self.donneeRetrait['descriptions'].set(article[0][3])
+                self.donneeRetrait['quantite'].set(article[0][4])
+                self.showRetraitForm(code)
         else:
             print("on effectue un depot")
             self.showDepotForm(code)
@@ -143,23 +148,23 @@ class MainWindow(Tk):
        
         for i in self.donneeDepot.values():
             print(i.get())
-        if len(self.donneeDepot['code'].get()) == 0:
+        if len(self.donneeRetrait['code'].get()) == 0:
             return False
         
-        if len(self.donneeDepot['designation'].get()) == 0:
+        if len(self.donneeRetrait['designation'].get()) == 0:
             return False
         
-        if not self.donneeDepot['quantite'].get().isnumeric() or len(self.donneeDepot['quantite'].get()) == 0:
+        if len(self.donneeRetrait['quantite'].get()) == 0:
             return False
         
         return True
 
     def deposer(self):
         if self.correctSaisieDepot():
-            if core.deposer(self.donneeRetrait['code'].get(),
-                         self.donneeRetrait['designation'].get(),
-                         self.donneeRetrait['descriptions'].get(),
-                         self.donneeRetrait['quantite'].get()
+            if core.deposer(self.donneeDepot['code'].get(),
+                         self.donneeDepot['designation'].get(),
+                         self.donneeDepot['descriptions'].get(),
+                         self.donneeDepot['quantite'].get()
                          ) == -1:
                 showwarning("Erreur", "L'article scannee n'est pas enregistrer dans e stock")
             
@@ -169,12 +174,12 @@ class MainWindow(Tk):
 
         for element in self.onglet_deposer.winfo_children():
             element.destroy()
-        
+
+        self.dispo = True
+
     def retirer(self):
         if self.correctSaisieRetrait():
             if core.retirer(self.donneeRetrait['code'].get(),
-                         self.donneeRetrait['designation'].get(),
-                         self.donneeRetrait['descriptions'].get(),
                          self.donneeRetrait['quantite'].get()
                          ) == -1:
                 showwarning("Erreur", "L'article scannee n'est pas enregistrer dans le stock")

@@ -28,7 +28,7 @@ def readAll():
 
 def consultation(code) -> list:
 	database()
-	sql = "select * from articles code=%s"
+	sql = "select * from articles where code=%s"
 	val = (code,)
 	cursor.execute(sql, val)
 	result = cursor.fetchall()
@@ -62,7 +62,7 @@ def retirer(code, quantite):
 		return -1
 	else:
 		quantEnStock = int(consul[0][4])
-		if quantite > quantEnStock:
+		if int(quantite) > quantEnStock:
 			return -1
 		else:
 			quantite = quantEnStock - int(quantite)
